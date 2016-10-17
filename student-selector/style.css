@@ -20,6 +20,8 @@ button {
 
 #setup {
   font-family: monospace;
+  text-align: center;
+  padding-top: 25%;
 }
 
 #setup input {
