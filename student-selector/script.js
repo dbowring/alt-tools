@@ -16,17 +16,33 @@
 
   var resetSelector = function() {
     selector = new StudentSelector();
-    _addStudentsEl('Boys');
-    _addStudentsEl('Girls');
-    initialRender();
+    try {
+      _addStudentsEl('Boys');
+      _addStudentsEl('Girls');
+    } catch (e) {
+      console.error(e);
+      return false;
+    }
+    if (selector.isUsable()) {
+      initialRender();
+    }
   };
 
+  var _intVal = function(selector) {
+    return parseInt($(selector).val());
+  }
+
   var _addStudentsEl = function(style) {
-    selector.addStudents(
-      $('#rangeStart' + style).val(),
-      $('#rangeEnd' + style).val(),
-      style
-    );
+    var start = _intVal('#rangeStart' + style),
+        end = _intVal('#rangeEnd' + style);
+    if (isNaN(start) || isNaN(end)) {
+      throw "invalid input";
+    }
+    if (end < start || (end === 0 && start === 0)) {
+      return;  // Invalid or disabled
+    }
+
+    selector.addStudents(start, end, style);
   };
 
   var initialRender = function() {
@@ -94,6 +110,10 @@
     this.students = [];
     this.selectionRound = 0;
     this.current = null;
+  };
+
+  StudentSelector.prototype.isUsable = function() {
+    return this.students.length > 0;
   };
 
   StudentSelector.prototype.addStudents= function(start, end, style) {
