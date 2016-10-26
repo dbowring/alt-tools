@@ -12,6 +12,13 @@
 
   var setupEvents = function() {
     $('#start').click(resetSelector);
+    $(window).resize(windowResize);
+  };
+
+  var windowResize = function() {
+    if (selector) {
+      selector.render($('#main-ui'));
+    }
   };
 
   var resetSelector = function() {
@@ -54,6 +61,8 @@
   };
 
   var reconfigure = function() {
+    // Forget current selector
+    selector = null;
     $('#main-ui').addClass('hidden');
     $('#setup')
       .removeClass('hidden')
