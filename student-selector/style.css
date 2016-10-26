@@ -30,6 +30,14 @@ button {
   margin: 0;
   font-family: monospace;
 }
+#setup input[type="checkbox"] {
+  width: auto;
+  vertical-align: middle;
+}
+
+#setup .input-group {
+  padding: 0.5em;
+}
 
 #main-ui {
   width: 100%;

@@ -6,15 +6,22 @@
 <body>
 
 <div id="setup">
-  A:
-  <input type="text" id="rangeStartBoys" value="1">
-  ~
-  <input type="text" id="rangeEndBoys" value="30">
-  B:
-  <input type="text" id="rangeStartGirls" value="31">
-  ~
-  <input type="text" id="rangeEndGirls" value="60">
-  <button id="start">Start</button>
+  <div class="input-group">
+    A:
+    <input type="text" id="rangeStartBoys" value="1">
+    ~
+    <input type="text" id="rangeEndBoys" value="30">
+    B:
+    <input type="text" id="rangeStartGirls" value="31">
+    ~
+    <input type="text" id="rangeEndGirls" value="60">
+  </div>
+  <div class="input-group">
+    Rounds? <input type="checkbox" id="doRounds" checked>
+  </div>
+  <div class="input-group">
+    <button id="start">Start</button>
+  </div>
 </div>
 
 <div id="main-ui" class="hidden">

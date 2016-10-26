@@ -15,7 +15,8 @@
   };
 
   var resetSelector = function() {
-    selector = new StudentSelector();
+    var cycle = $('#doRounds').is(':checked');
+    selector = new StudentSelector(cycle);
     try {
       _addStudentsEl('Boys');
       _addStudentsEl('Girls');
@@ -48,10 +49,15 @@
   var initialRender = function() {
     $('#setup').addClass('hidden');
     var target = $('#main-ui');
-
-    selector.render(target);
-
     target.removeClass('hidden');
+    selector.render(target);
+  };
+
+  var reconfigure = function() {
+    $('#main-ui').addClass('hidden');
+    $('#setup')
+      .removeClass('hidden')
+      .find('input').first().focus();
   };
 
   var selectNext= function() {
@@ -106,7 +112,8 @@
   };
 
 
-  var StudentSelector = function() {
+  var StudentSelector = function(doRounds) {
+    this.doRounds = !!doRounds;
     this.students = [];
     this.selectionRound = 0;
     this.current = null;
@@ -123,7 +130,7 @@
     }
   };
 
-  StudentSelector.prototype.getPool = function() {
+  StudentSelector.prototype._getPoolCurrent = function() {
     var pool = [];
     for (var i=0; i<this.students.length; i++) {
       if (this.students[i].selectedCount === this.selectionRound) {
@@ -137,11 +144,20 @@
     return pool;
   };
 
+  StudentSelector.prototype.getPool = function() {
+    if (this.doRounds) {
+      return this._getPoolCurrent();
+    }
+    return this.students;
+  };
+
   StudentSelector.prototype.selectNext= function() {
     var pool = this.getPool();
 
     this.current = randomChoice(pool);
-    this.current.selectedCount++;
+    if (this.doRounds) {
+      this.current.selectedCount++;
+    }
   };
 
   StudentSelector.prototype.render = function(target) {
@@ -162,20 +178,22 @@
       .text(this.current ? this.current.number : '--');
     target.append(currentDiv);
 
-    var nextBtn = $(document.createElement('button'));
-    nextBtn
+    var nextBtn = $(document.createElement('button'))
       .text('Next')
       .click(animatedSelectNext)
-    var resetBtn = $(document.createElement('button'));
-    resetBtn
+    var resetBtn = $(document.createElement('button'))
       .text('Reset')
       .click(resetSelector);
+    var reconfigureBtn = $(document.createElement('button'))
+      .text('Reconfigure')
+      .click(reconfigure);
     target
       .append(
         $(document.createElement('div'))
           .addClass('ctrl-wrapper')
           .append(nextBtn)
           .append(resetBtn)
+          .append(reconfigureBtn)
       );
     nextBtn.focus();
   };
