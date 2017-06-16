@@ -1,8 +1,10 @@
 (function($) {
   var selector = null;
+  var audio = {};
 
   var initialize = function() {
     setupEvents();
+    setupAudio();
     $('input').first().focus();
   };
 
@@ -15,6 +17,13 @@
     $(window).resize(windowResize);
   };
 
+  var setupAudio = function() {
+      audio.spin = document.createElement('audio');
+      audio.spin.src = 'spin.ogg';
+      audio.ding = document.createElement('audio');
+      audio.ding.src = 'ding.ogg';
+  };
+
   var windowResize = function() {
     if (selector) {
       selector.render($('#main-ui'));
@@ -23,7 +32,8 @@
 
   var resetSelector = function() {
     var cycle = $('#doRounds').is(':checked');
-    selector = new StudentSelector(cycle);
+    var useSound = $('#sound').is(':checked');
+    selector = new StudentSelector(cycle, useSound);
     try {
       _addStudentsEl('Boys');
       _addStudentsEl('Girls');
@@ -81,7 +91,7 @@
       return selectNext();
     }
     var flickerCount = 0;
-    var flickerNumber = Math.floor(Math.random() * 10) + 5;
+    var flickerNumber = Math.floor(Math.random() * 30) + 10;
     var currentDiv = $('.current-student');
     $('.ctrl-wrapper button').hide();
     currentDiv.addClass('flickering');
@@ -89,16 +99,25 @@
       if (flickerCount < flickerNumber) {
         flickerCount++;
         currentDiv.text(randomChoice(pool).number);
-        var delay = Math.floor(Math.random()* 50) + 25;
+        var delay = Math.floor(Math.random()* 90) + 25;
         window.setTimeout(flicker, delay);
       } else {
         selectNext();
+        if (selector.useSound) {
+          audio.spin.pause();
+          audio.spin.currentTime = 0;
+          audio.ding.play();
+        }
       }
     };
+    if (selector.useSound) {
+      audio.spin.play();
+    }
     flicker();
   };
 
   var randomChoice = function(pool) {
+    Math.random(); // Chrome correlation bug
     var index = Math.floor(Math.random() * pool.length);
     return pool[index];
   };
@@ -121,8 +140,9 @@
   };
 
 
-  var StudentSelector = function(doRounds) {
+  var StudentSelector = function(doRounds, useSound) {
     this.doRounds = !!doRounds;
+    this.useSound = !!useSound;
     this.students = [];
     this.selectionRound = 0;
     this.current = null;

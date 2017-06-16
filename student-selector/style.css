@@ -30,6 +30,11 @@ button {
   margin: 0;
   font-family: monospace;
 }
+
+#setup #teachers {
+  width: 15em;
+}
+
 #setup input[type="checkbox"] {
   width: auto;
   vertical-align: middle;
