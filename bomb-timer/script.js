@@ -15,7 +15,8 @@
     var display = null, ready = false, nextTimer = null, timeout = null;
     var finishAt = null;
     var elements = {
-      countdown: $('#countdown')
+      countdown: $('#countdown'),
+      totalTime: $('#totalTime')
     }
     
     var init = function() {
@@ -52,6 +53,7 @@
       }
       timeout = window.setTimeout(onTimerEnd, seconds * 1000);
       finishAt = new Date((new Date()).getTime() + (seconds * 1000));
+      elements.totalTime.text(seconds.toFixed(3));
       showTimer();
       display.postMessage({cmd: 'beep'}, '*');
     };
@@ -60,10 +62,11 @@
       if (finishAt) {
         var now = new Date();
         var delta = finishAt.getTime() - now.getTime();
-        elements.countdown.show().text(delta / 1000);
+        var deltaText = (delta / 1000).toFixed(3);
+        elements.countdown.text(deltaText);
         window.requestAnimationFrame(showTimer);
       } else {
-        contdown.hide();
+        elements.countdown.text((0).toFixed(3));
       }
     };
 
