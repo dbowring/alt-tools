@@ -33,6 +33,8 @@
   var resetSelector = function() {
     var cycle = $('#doRounds').is(':checked');
     var useSound = $('#sound').is(':checked');
+    var alt = $('#alt').val()
+    var jte = $('#jte').val()
     selector = new StudentSelector(cycle, useSound);
     try {
       _addStudentsEl('Boys');
@@ -40,6 +42,12 @@
     } catch (e) {
       console.error(e);
       return false;
+    }
+    if (alt.length > 0) {
+      selector.students.push(new Teacher(alt, 'teacher'))
+    }
+    if (jte.length > 0) {
+      selector.students.push(new Teacher(jte, 'teacher'))
     }
     if (selector.isUsable()) {
       initialRender();
@@ -93,12 +101,22 @@
     var flickerCount = 0;
     var flickerNumber = Math.floor(Math.random() * 30) + 10;
     var currentDiv = $('.current-student');
+    var last;
     $('.ctrl-wrapper button').hide();
     currentDiv.addClass('flickering');
+    if (this.current) {
+      currentDiv.removeClass(this.current.style);
+    }
     var flicker = function() {
       if (flickerCount < flickerNumber) {
         flickerCount++;
-        currentDiv.text(randomChoice(pool).number);
+        var next = randomChoice(pool)
+        if (last) {
+          currentDiv.removeClass(last.style);
+        }
+        currentDiv.text(next.number);
+        currentDiv.addClass(next.style);
+        last = next;
         var delay = Math.floor(Math.random()* 90) + 25;
         window.setTimeout(flicker, delay);
       } else {
@@ -139,6 +157,11 @@
     this.selectedCount = 0;
   };
 
+  var Teacher = function(name, style) {
+    this.number = name;
+    this.style = style;
+    this.selectedCount = 0;
+  };
 
   var StudentSelector = function(doRounds, useSound) {
     this.doRounds = !!doRounds;
@@ -204,6 +227,7 @@
     var currentDiv = $(document.createElement('div'));
     currentDiv
       .addClass('current-student')
+      .addClass(this.current ? this.current.style : 'none')
       .text(this.current ? this.current.number : '--');
     target.append(currentDiv);
 
@@ -232,9 +256,15 @@
     li
       .text(student.number)
       .addClass('student')
+      .addClass(student.style)
       .addClass(
         student.selectedCount === this.selectionRound ? 'pool-in' : 'pool-out'
       );
+    window.t = student;
+    console.log(student.constructor, Teacher, student.constructor === Teacher);
+    if (student.constructor === Teacher) {
+      li.text('??');
+    }
     return li;
   };
 

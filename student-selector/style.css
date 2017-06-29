@@ -31,6 +31,12 @@ button {
   font-family: monospace;
 }
 
+#setup input.long {
+  width: 12em;
+  margin-top: 1em;
+  text-align: center;
+}
+
 #setup #teachers {
   width: 15em;
 }
@@ -79,6 +85,15 @@ button {
 #main-ui .current-student {
   font-family: monospace;
   font-size: 400px;
+  height: 460px;
+  line-height: 460px;
+  color: rgb(102, 217, 239);
+  width: 100%;
+  text-align: center;
+}
+#main-ui .current-student.teacher {
+  font-family: monospace;
+  font-size: 200px;
   color: rgb(102, 217, 239);
   width: 100%;
   text-align: center;
