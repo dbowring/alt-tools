@@ -22,6 +22,7 @@
     var init = function() {
       setupEvents();
       $('#main-ui').hide();
+      $('title').text('Bomb Timer Controls');
     };
 
     var showDisplay = function() {
@@ -125,6 +126,7 @@
 
     var init = function() {
       $('#setup').hide();
+      $('title').text('Bomb Timer Display');
       parent.postMessage({cmd: 'hello'}, '*');
     };
 
