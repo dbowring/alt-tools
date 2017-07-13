@@ -18,10 +18,10 @@
   };
 
   var setupAudio = function() {
-      audio.spin = document.createElement('audio');
-      audio.spin.src = 'spin.ogg';
-      audio.ding = document.createElement('audio');
-      audio.ding.src = 'ding.ogg';
+    audio.spin = document.createElement('audio');
+    audio.spin.src = 'spin.ogg';
+    audio.ding = document.createElement('audio');
+    audio.ding.src = 'ding.ogg';
   };
 
   var windowResize = function() {
@@ -60,7 +60,7 @@
 
   var _addStudentsEl = function(style) {
     var start = _intVal('#rangeStart' + style),
-        end = _intVal('#rangeEnd' + style);
+      end = _intVal('#rangeEnd' + style);
     if (isNaN(start) || isNaN(end)) {
       throw "invalid input";
     }
@@ -219,7 +219,6 @@
     ul.addClass('students');
     for (var i=0; i<this.students.length; i++) {
       ul.append(this._renderStudent(this.students[i]));
-
     }
     var width = ul.outerWidth() / this.students.length;
     ul.find('.student').width(width);
@@ -260,8 +259,6 @@
       .addClass(
         student.selectedCount === this.selectionRound ? 'pool-in' : 'pool-out'
       );
-    window.t = student;
-    console.log(student.constructor, Teacher, student.constructor === Teacher);
     if (student.constructor === Teacher) {
       li.text('??');
     }
