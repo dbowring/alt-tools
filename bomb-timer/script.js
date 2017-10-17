@@ -127,14 +127,14 @@
     var parent = window.opener.window, timer = null, timeout = null,
         finishAt = null;
     var audio = {
-      beep: document.createElement('audio'),
-      explode: document.createElement('audio')
+      beep: new Howl({
+        src: ['beep.ogg'],
+        loop: true
+      }),
+      explode: new Howl({
+        src: 'explode.ogg',
+      })
     };
-    audio.beep.src = 'beep.ogg';
-    audio.beep.loop = true;
-    audio.beep.preload = 'auto';
-    audio.explode.src = 'explode.ogg';
-    audio.explode.preload = 'auto';
     var elements = {
       timer: $('#main-ui .countdown')
     };
@@ -154,15 +154,13 @@
     var onCommand = function(data, source) {
       if (data.cmd === 'beep') {
         $('.flasher').removeClass('exploded').addClass('active');
-        audio.explode.pause();
-        audio.explode.currentTime = 0;
+        audio.explode.stop();
         audio.beep.play();
         finishAt = data.finishAt;
         updateCountdown()
       } else if (data.cmd === 'explode') {
         $('.flasher').removeClass('active').addClass('exploded');
-        audio.beep.pause();
-        audio.beep.currentTime = 0;
+        audio.beep.stop();
         audio.explode.play();
         finishAt = null;
       }

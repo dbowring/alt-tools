@@ -18,10 +18,13 @@
   };
 
   var setupAudio = function() {
-    audio.spin = document.createElement('audio');
-    audio.spin.src = 'spin.ogg';
-    audio.ding = document.createElement('audio');
-    audio.ding.src = 'ding.ogg';
+    audio.spin = new Howl({
+      src: ['spin.ogg'],
+      loop: true
+    });
+    audio.ding = new Howl({
+      src: ['ding.ogg']
+    });
   };
 
   var windowResize = function() {
@@ -99,7 +102,12 @@
       return selectNext();
     }
     var flickerCount = 0;
-    var flickerNumber = Math.floor(Math.random() * 30) + 10;
+    var flickerNumber;
+    if (Math.random() < 0.05) {
+      flickerNumber = 200;
+    } else {
+      flickerNumber = Math.floor(Math.random() * 30) + 10
+    }
     var currentDiv = $('.current-student');
     var last;
     $('.ctrl-wrapper button').hide();
@@ -122,8 +130,7 @@
       } else {
         selectNext();
         if (selector.useSound) {
-          audio.spin.pause();
-          audio.spin.currentTime = 0;
+          audio.spin.stop();
           audio.ding.play();
         }
       }
