@@ -18,9 +18,11 @@
     var elements = {
       countdown: $('#setup #countdown'),
       totalTime: $('#totalTime'),
-      optDisplayTimer: $('#displayTimer')
+      optDisplayTimer: $('#displayTimer'),
+      optIsContinious: $('#isContinious'),
+      optRollWait: $('#rollWait'),
     }
-    
+
     var init = function() {
       setupEvents();
       $('#main-ui').hide();
@@ -73,10 +75,18 @@
       }
     };
 
+    var postExplode = function() {
+      if (elements.optIsContinious.is(':checked')) {
+        setTimer(generateLength());
+      }
+    };
+
     var onTimerEnd = function() {
       timeout = null;
       finishAt = null;
       display.postMessage({cmd: 'explode'}, '*');
+      var rollWait = parseFloat(elements.optRollWait.val());
+      window.setTimeout(postExplode, rollWait * 1000);
     }
 
     var setupEvents = function() {
@@ -84,21 +94,35 @@
       $('#show').click(showDisplay);
       $('#explode').click(forceExplode);
       elements.optDisplayTimer.click(updateDisplayTimer);
+
+      window.addEventListener('unload', function() {
+        if (display && !display.closed) {
+          display.close();
+        }
+      });
     };
 
     var forceExplode = function() {
-      onTimerEnd()
+      if (timeout) {
+        window.clearTimeout(timeout);
+        timeout = null;
+      }
+      elements.optIsContinious.prop('checked', false);
+      onTimerEnd();
     };
 
     var updateDisplayTimer = function() {
       displayTimer = !!elements.optDisplayTimer.is(':checked');
     };
 
-    var onStart = function() {
+    var generateLength = function() {
       var min = parseInt($('#minSeconds').val());
       var splash = parseInt($('#splash').val());
-      var time = min + Math.random() * splash;
-      setTimer(time);
+      return min + Math.random() * splash;
+    };
+
+    var onStart = function() {
+      setTimer(generateLength());
     };
 
     var onMessage = function(event) {
@@ -125,14 +149,14 @@
 
   var DisplayManager = function() {
     var parent = window.opener.window, timer = null, timeout = null,
-        finishAt = null;
+        finishAt = null, lastBeep = null;
     var audio = {
       beep: new Howl({
         src: ['beep.ogg'],
         loop: true
       }),
       explode: new Howl({
-        src: 'explode.ogg',
+        src: 'explode.ogg'
       })
     };
     var elements = {
@@ -155,25 +179,28 @@
       if (data.cmd === 'beep') {
         $('.flasher').removeClass('exploded').addClass('active');
         audio.explode.stop();
-        audio.beep.play();
+        lastBeep = audio.beep.play();
         finishAt = data.finishAt;
         updateCountdown()
       } else if (data.cmd === 'explode') {
         $('.flasher').removeClass('active').addClass('exploded');
-        audio.beep.stop();
+        if (lastBeep) {
+          audio.beep.stop(lastBeep);
+          lastBeep = null;
+        } else {
+          audio.beep.stop();
+        }
         audio.explode.play();
         finishAt = null;
       }
     };
 
     var updateCountdown = function() {
-      console.log('updateCountDown', finishAt);
       if (!finishAt) {
         elements.timer.text('');
         return;
       }
       var delta = finishAt - (new Date()).getTime();
-      console.log('updateCountDown >>>', delta);
       if (delta <= 0) {
         elements.timer.text('');
         return;

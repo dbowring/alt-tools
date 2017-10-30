@@ -17,8 +17,22 @@
     <button id="show">Show</button>
     <button id="explode">Force Explode</button>
     <br/><br/>
-    Show timer?
-    <input type="checkbox" id="displayTimer">
+    <table>
+      <tr>
+        <td class="label">Show timer?</td>
+        <td><input type="checkbox" id="displayTimer"></td>
+      </tr>
+      <tr>
+        <td class="label">Continious?</td>
+        <td><input type="checkbox" id="isContinious"></td>
+      </tr>
+      <tr>
+        <td class="label">Wait (seconds)</td>
+        <td>
+          <input type="text" id="rollWait" value="2">
+        </td>
+      </tr>
+    </table>
   </div>
   <div id="countdown"></div>
   <div id="totalTime"></div>
