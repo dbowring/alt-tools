@@ -19,6 +19,7 @@
       countdown: $('#setup #countdown'),
       totalTime: $('#totalTime'),
       optDisplayTimer: $('#displayTimer'),
+      optPlayBeeps: $('#playBeeps'),
       optIsContinious: $('#isContinious'),
       optRollWait: $('#rollWait'),
     }
@@ -60,7 +61,11 @@
       finishAt = new Date((new Date()).getTime() + (seconds * 1000));
       elements.totalTime.text(seconds.toFixed(3));
       showTimer();
-      display.postMessage({cmd: 'beep', finishAt: displayTimer ? finishAt.getTime() : null}, '*');
+      display.postMessage({
+        cmd: 'beep',
+        finishAt: displayTimer ? finishAt.getTime() : null,
+        playBeeps: elements.optPlayBeeps.is(':checked')
+      }, '*');
     };
 
     var showTimer = function() {
@@ -147,17 +152,24 @@
     };
   };
 
+  var loadSound = function(src, loop) {
+    var sound = document.createElement('audio');
+    sound.src = src;
+    sound.loop = !!loop;
+    sound.preload = 'auto';
+    sound.stop = function() {
+      this.pause();
+      this.currentTime = 0;
+    };
+    return sound;
+  };
+
   var DisplayManager = function() {
     var parent = window.opener.window, timer = null, timeout = null,
         finishAt = null, lastBeep = null;
     var audio = {
-      beep: new Howl({
-        src: ['beep.ogg'],
-        loop: true
-      }),
-      explode: new Howl({
-        src: 'explode.ogg'
-      })
+      beep: loadSound('beep.ogg', true),
+      explode: loadSound('explode.ogg'),
     };
     var elements = {
       timer: $('#main-ui .countdown')
@@ -175,21 +187,30 @@
       }
     };
 
+    var stopBeeping = function() {
+      if (lastBeep) {
+        audio.beep.stop(lastBeep);
+        lastBeep = null;
+      } else {
+        audio.beep.stop();
+      }
+    };
+
     var onCommand = function(data, source) {
       if (data.cmd === 'beep') {
         $('.flasher').removeClass('exploded').addClass('active');
         audio.explode.stop();
-        lastBeep = audio.beep.play();
+        if (data.playBeeps) {
+          lastBeep = audio.beep.play();
+        } else {
+          // In-case overridding another, older timer
+          stopBeeping();
+        }
         finishAt = data.finishAt;
         updateCountdown()
       } else if (data.cmd === 'explode') {
         $('.flasher').removeClass('active').addClass('exploded');
-        if (lastBeep) {
-          audio.beep.stop(lastBeep);
-          lastBeep = null;
-        } else {
-          audio.beep.stop();
-        }
+        stopBeeping();
         audio.explode.play();
         finishAt = null;
       }
