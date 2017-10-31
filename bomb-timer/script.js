@@ -152,24 +152,12 @@
     };
   };
 
-  var loadSound = function(src, loop) {
-    var sound = document.createElement('audio');
-    sound.src = src;
-    sound.loop = !!loop;
-    sound.preload = 'auto';
-    sound.stop = function() {
-      this.pause();
-      this.currentTime = 0;
-    };
-    return sound;
-  };
-
   var DisplayManager = function() {
     var parent = window.opener.window, timer = null, timeout = null,
         finishAt = null, lastBeep = null;
     var audio = {
-      beep: loadSound('beep.ogg', true),
-      explode: loadSound('explode.ogg'),
+      beep: new Sound('beep.ogg', true),
+      explode: new Sound('explode.ogg'),
     };
     var elements = {
       timer: $('#main-ui .countdown')

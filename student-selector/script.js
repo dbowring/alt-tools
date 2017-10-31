@@ -17,21 +17,9 @@
     $(window).resize(windowResize);
   };
 
-  var loadSound = function(src, loop) {
-    var sound = document.createElement('audio');
-    sound.src = src;
-    sound.loop = !!loop;
-    sound.preload = 'auto';
-    sound.stop = function() {
-      this.pause();
-      this.currentTime = 0;
-    };
-    return sound;
-  };
-
   var setupAudio = function() {
-    audio.spin = loadSound('spin.ogg', true);
-    audio.ding = loadSound('ding.ogg');
+    audio.spin = new Sound('spin.ogg', true);
+    audio.ding = new Sound('ding.ogg');
   };
 
   var windowResize = function() {
